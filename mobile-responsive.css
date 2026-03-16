@@ -1,0 +1,81 @@
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .phone-selector {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 10px 0;
+    }
+    
+    .phone-btn {
+        flex: 0 0 auto;
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .weapon-strip {
+        padding: 10px;
+    }
+    
+    .weapon-item {
+        min-width: 60px;
+    }
+    
+    .weapon-item span {
+        font-size: 0.7rem;
+    }
+    
+    .chat-messages {
+        max-height: 300px;
+    }
+    
+    .ashell-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .suggestion-chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+    
+    .chip {
+        flex: 0 0 auto;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 10px;
+    }
+}
+
+/* Tablet responsiveness */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .content-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .chat-column {
+        grid-column: span 2;
+    }
+}
+
+/* Landscape mode */
+@media (orientation: landscape) and (max-height: 600px) {
+    .app-container {
+        padding: 10px;
+    }
+    
+    .main-header {
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .chat-messages {
+        max-height: 200px;
+    }
+}
