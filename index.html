@@ -1,482 +1,383 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZAKA SENSI · FULL TAB PLAYER</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAKA SENSI BOT 🔥</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
 
-    body {
-      background: #000;
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      color: white;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
+        body {
+            background: #0a0612;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    /* --- FULL TAB VIDEO PLAYER (LOOKS LIKE LOCAL FILE) --- */
-    .video-player-tab {
-      width: 100%;
-      background: #0b0e14;
-      display: flex;
-      flex-direction: column;
-      border-bottom: 2px solid #ff0055;
-      box-shadow: 0 10px 30px rgba(255, 0, 85, 0.3);
-      z-index: 15;
-      position: relative;
-    }
+        /* Simple video container */
+        .video-header {
+            width: 100%;
+            background: #000;
+            position: relative;
+            border-bottom: 3px solid #ff0055;
+        }
 
-    /* pseudo tab bar — like a pro video app */
-    .video-tab-bar {
-      display: flex;
-      align-items: center;
-      padding: 8px 20px;
-      background: #0f1219;
-      gap: 15px;
-      border-bottom: 1px solid #2a2e3a;
-    }
+        #simpleVideo {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            background: #1a1a2e;
+        }
 
-    .tab-dots {
-      display: flex;
-      gap: 8px;
-    }
+        /* Title bar */
+        .top-bar {
+            background: #0d0b1a;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #ff0055;
+        }
 
-    .dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-    }
+        .top-bar h1 {
+            font-size: 2rem;
+            background: linear-gradient(45deg, #ff0055, #7700ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
 
-    .dot.red { background: #ff5f5f; }
-    .dot.yellow { background: #ffc25f; }
-    .dot.green { background: #5ac85a; }
+        .top-bar p {
+            color: #b388ff;
+            font-size: 1rem;
+        }
 
-    .tab-title {
-      color: #ccd0da;
-      font-weight: 600;
-      font-size: 1rem;
-      letter-spacing: 1px;
-      background: #1e232e;
-      padding: 4px 16px;
-      border-radius: 30px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid #3f4555;
-    }
+        /* Chat container */
+        .chat-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100vh - 350px);
+        }
 
-    .tab-title span {
-      color: #ff98b0;
-    }
+        .message {
+            max-width: 85%;
+            margin: 12px 0;
+            padding: 15px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            line-height: 1.5;
+            animation: slideIn 0.3s ease;
+        }
 
-    .tab-spacer {
-      flex: 1;
-    }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    .time-badge {
-      background: #000;
-      padding: 5px 15px;
-      border-radius: 40px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      border: 1px solid #ff3b7f;
-      color: #ffc0cb;
-    }
+        .bot-message {
+            background: #1e1a2e;
+            border-left: 5px solid #ff0055;
+            align-self: flex-start;
+            margin-right: auto;
+            border-radius: 25px 25px 25px 5px;
+        }
 
-    /* video container — fills rest of tab area, looks like inline player */
-    .video-container {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #050608;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      border-bottom: 2px solid #ff3b7f;
-    }
+        .user-message {
+            background: linear-gradient(135deg, #ff0055, #8a2be2);
+            align-self: flex-end;
+            margin-left: auto;
+            border-radius: 25px 25px 5px 25px;
+        }
 
-    /* local video element (no youtube branding) */
-    #bg-video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+        /* Sensi grid */
+        .sensi-box {
+            background: rgba(0,0,0,0.5);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 15px;
+            border: 1px solid #ff3377;
+        }
 
-    /* optional big play overlay (just for looks) — non functional */
-    .video-glow {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: radial-gradient(circle at 70% 30%, rgba(255,0,85,0.15) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 5;
-    }
+        .sensi-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
 
-    /* --- MAIN CHAT (below video) --- */
-    .app {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: #0a0c10;
-      background-image: linear-gradient(145deg, #11161f 0%, #03060b 100%);
-      z-index: 10;
-      position: relative;
-      overflow: hidden;
-    }
+        .stat {
+            background: rgba(255,0,85,0.1);
+            padding: 12px;
+            border-radius: 15px;
+            text-align: center;
+        }
 
-    /* chat header with neon */
-    .title {
-      text-align: center;
-      padding: 15px 10px;
-      font-weight: 800;
-      font-size: 1.7rem;
-      letter-spacing: 3px;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid #ff3b7f;
-      color: white;
-      text-shadow: 0 0 10px #ff0055, 0 0 30px #8a2be2;
-      z-index: 6;
-    }
+        .stat-label {
+            color: #ff99bb;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-    .title small {
-      font-size: 1rem;
-      background: #ff0055;
-      padding: 3px 12px;
-      border-radius: 30px;
-      margin-left: 12px;
-      color: white;
-      text-shadow: none;
-      letter-spacing: 0;
-    }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #fff, #ffbb00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-    /* chat container */
-    .chat {
-      flex: 1;
-      padding: 20px 16px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      scroll-behavior: smooth;
-    }
+        .badge-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed #ff3377;
+        }
 
-    .msg {
-      max-width: 80%;
-      padding: 14px 20px;
-      border-radius: 26px;
-      font-size: 1rem;
-      line-height: 1.5;
-      word-break: break-word;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.7);
-      backdrop-filter: blur(10px);
-      animation: pop 0.2s ease-out;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
+        .badge {
+            background: #ff0055;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
 
-    @keyframes pop {
-      0% { transform: scale(0.9); opacity: 0.3; }
-      100% { transform: scale(1); opacity: 1; }
-    }
+        /* Input area */
+        .input-area {
+            display: flex;
+            padding: 20px;
+            background: #0d0b1a;
+            border-top: 2px solid #ff0055;
+            gap: 12px;
+            position: sticky;
+            bottom: 0;
+        }
 
-    .bot {
-      background: rgba(20, 28, 40, 0.95);
-      border-left: 6px solid #ff0055;
-      align-self: flex-start;
-      border-bottom-left-radius: 6px;
-      color: #f0f2ff;
-    }
+        #userInput {
+            flex: 1;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 30px;
+            background: #1f1b30;
+            color: white;
+            font-size: 1rem;
+            outline: 2px solid transparent;
+        }
 
-    .user {
-      background: linear-gradient(135deg, #ff1a66, #7d4cf0);
-      align-self: flex-end;
-      border-bottom-right-radius: 6px;
-      border-right: 3px solid white;
-      color: white;
-      font-weight: 500;
-    }
+        #userInput:focus {
+            outline: 2px solid #ff0055;
+            background: #2a2540;
+        }
 
-    /* sensi stats grid (14 values) */
-    .sensi-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px 20px;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 20px;
-      border-radius: 28px;
-      margin-top: 12px;
-      border: 1px solid #ff4d7a;
-      backdrop-filter: blur(10px);
-    }
+        #sendBtn {
+            padding: 16px 30px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(45deg, #ff0055, #9d4dff);
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 20px #ff0055;
+        }
 
-    .sensi-item {
-      display: flex;
-      flex-direction: column;
-    }
+        #sendBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px #ff3377;
+        }
 
-    .sensi-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: #ffb0c3;
-    }
+        #sendBtn:active {
+            transform: scale(0.95);
+        }
 
-    .sensi-value {
-      font-size: 2rem;
-      font-weight: 800;
-      background: linear-gradient(to right, #ffaa33, #ff3b7f);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      line-height: 1.2;
-    }
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ff99bb;
+            border-top: 3px solid #ff0055;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
 
-    .sensi-footnote {
-      margin-top: 18px;
-      border-top: 1px dashed #ff4d7a;
-      padding-top: 12px;
-      font-size: 0.9rem;
-      display: flex;
-      justify-content: space-between;
-      color: #b8b8ff;
-    }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-    .badge {
-      background: #ff0055;
-      padding: 6px 18px;
-      border-radius: 40px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: white;
-      box-shadow: 0 0 20px #ff0055;
-    }
-
-    /* input area */
-    .inputBox {
-      display: flex;
-      padding: 18px 20px;
-      gap: 12px;
-      background: rgba(10, 12, 20, 0.95);
-      backdrop-filter: blur(20px);
-      border-top: 2px solid #ff3b7f;
-      z-index: 6;
-    }
-
-    input {
-      flex: 1;
-      padding: 16px 22px;
-      border: none;
-      border-radius: 60px;
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      font-size: 1rem;
-      outline: 2px solid transparent;
-      transition: 0.2s;
-    }
-
-    input:focus {
-      outline: 2px solid #ff0055;
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    input::placeholder {
-      color: #bbb;
-    }
-
-    button {
-      padding: 16px 34px;
-      border: none;
-      border-radius: 60px;
-      background: linear-gradient(145deg, #ff0055, #9b4dff);
-      color: white;
-      font-weight: 800;
-      font-size: 1.1rem;
-      letter-spacing: 1px;
-      cursor: pointer;
-      box-shadow: 0 0 20px #ff0055;
-      transition: 0.2s;
-      text-transform: uppercase;
-      border: 1px solid rgba(255,215,215,0.4);
-    }
-
-    button:hover {
-      box-shadow: 0 0 35px #ff4d94;
-      transform: scale(1.03);
-    }
-
-    @media (max-width: 600px) {
-      .title { font-size: 1.3rem; }
-      .msg { max-width: 95%; }
-      .sensi-value { font-size: 1.5rem; }
-      .video-container { aspect-ratio: 16/9; }
-    }
-  </style>
+        /* Fallback if video doesn't load */
+        .video-fallback {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- FULL TAB VIDEO PLAYER (LOOKS LIKE LOCAL FILE, NOT YOUTUBE) -->
-  <div class="video-player-tab">
-    <!-- fake tab bar with dots and title -->
-    <div class="video-tab-bar">
-      <div class="tab-dots">
-        <div class="dot red"></div>
-        <div class="dot yellow"></div>
-        <div class="dot green"></div>
-      </div>
-      <div class="tab-title">
-        <span>🎬</span> ZAKA SENSI 14 · NATIVE PLAYER <span>⚡</span>
-      </div>
-      <div class="tab-spacer"></div>
-      <div class="time-badge">🔥 LIVE · 24/7</div>
+    <!-- SIMPLE VIDEO THAT WILL DEFINITELY WORK -->
+    <div class="video-header">
+        <video id="simpleVideo" autoplay muted loop playsinline>
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-gamer-playing-on-a-computer-43390-large.mp4" type="video/mp4">
+            <!-- Fallback text if video fails -->
+            Your browser does not support the video tag.
+        </video>
     </div>
 
-    <!-- actual video element (MP4 from local-like source) we use same gaming video but clean, no iframe, no youtube branding -->
-    <div class="video-container">
-      <video id="bg-video" autoplay muted loop playsinline>
-        <!-- using same high quality gaming clip, but served as video tag (looks like a file) -->
-        <source src="https://cdn.coverr.co/videos/coverr-gaming-session-5176/1080p.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <div class="video-glow"></div> <!-- just style -->
-    </div>
-  </div>
-
-  <!-- CHAT APP SECTION -->
-  <div class="app">
-    <div class="title">
-      ZAKA SENSI 🤖 <small>14 FEATS</small>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <h1>⚡ ZAKA SENSI ⚡</h1>
+        <p>14 FEATURES · 24/7 · HEADLOCK</p>
     </div>
 
-    <div class="chat" id="chat">
-      <div class="msg bot">
-        💀 <strong>GOD SENSITIVITY ONLINE</strong><br>
-        Drop your device (Android / iPhone) — generate 14 tuned stats
-      </div>
+    <!-- CHAT MESSAGES -->
+    <div class="chat-container" id="chatMessages">
+        <div class="message bot-message">
+            💀 <strong>WELCOME TO GOD SENSITIVITY</strong><br>
+            Type your device (Android / iPhone / iPad) and get 14 tuned stats 🔥
+        </div>
     </div>
 
-    <div class="inputBox">
-      <input id="input" type="text" placeholder="e.g., iPhone 15 Pro Max / Android 14..." autocomplete="off">
-      <button onclick="sendMessage()">GENERATE</button>
+    <!-- INPUT AREA -->
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Enter your phone model..." autocomplete="off">
+        <button id="sendBtn">GENERATE</button>
     </div>
-  </div>
 
-  <script>
-    (function() {
-      const chatDiv = document.getElementById('chat');
-      const inputField = document.getElementById('input');
-
-      // ----- 14 SENSITIVITY FEATURES -----
-      function random(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-      }
-
-      function generateFullSensi() {
-        return {
-          general: random(160, 215),
-          redDot: random(150, 210),
-          holo: random(145, 205),
-          scope2x: random(135, 195),
-          scope3x: random(125, 185),
-          scope4x: random(120, 180),
-          scope6x: random(110, 170),
-          sniper: random(105, 165),
-          freeLook: random(140, 200),
-          gyroGeneral: random(180, 250),
-          gyroScope: random(160, 230),
-          tppAim: random(150, 220),
-          fppAim: random(140, 210),
-          adsSensitivity: random(130, 190)
+    <script>
+        // Get elements
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        
+        // Video error handling
+        const video = document.getElementById('simpleVideo');
+        video.onerror = function() {
+            console.log("Video failed to load, but that's okay");
+            // Video will just show black, no big deal
         };
-      }
 
-      function formatSensiMessage(s) {
-        return `
-          <div class="sensi-grid">
-            <div class="sensi-item"><span class="sensi-label">GENERAL</span><span class="sensi-value">${s.general}</span></div>
-            <div class="sensi-item"><span class="sensi-label">RED DOT</span><span class="sensi-value">${s.redDot}</span></div>
-            <div class="sensi-item"><span class="sensi-label">HOLO</span><span class="sensi-value">${s.holo}</span></div>
-            <div class="sensi-item"><span class="sensi-label">2X SCOPE</span><span class="sensi-value">${s.scope2x}</span></div>
-            <div class="sensi-item"><span class="sensi-label">3X SCOPE</span><span class="sensi-value">${s.scope3x}</span></div>
-            <div class="sensi-item"><span class="sensi-label">4X SCOPE</span><span class="sensi-value">${s.scope4x}</span></div>
-            <div class="sensi-item"><span class="sensi-label">6X SCOPE</span><span class="sensi-value">${s.scope6x}</span></div>
-            <div class="sensi-item"><span class="sensi-label">SNIPER</span><span class="sensi-value">${s.sniper}</span></div>
-            <div class="sensi-item"><span class="sensi-label">FREE LOOK</span><span class="sensi-value">${s.freeLook}</span></div>
-            <div class="sensi-item"><span class="sensi-label">GYRO GEN</span><span class="sensi-value">${s.gyroGeneral}</span></div>
-            <div class="sensi-item"><span class="sensi-label">GYRO SCOPE</span><span class="sensi-value">${s.gyroScope}</span></div>
-            <div class="sensi-item"><span class="sensi-label">TPP AIM</span><span class="sensi-value">${s.tppAim}</span></div>
-            <div class="sensi-item"><span class="sensi-label">FPP AIM</span><span class="sensi-value">${s.fppAim}</span></div>
-            <div class="sensi-item"><span class="sensi-label">ADS SENSE</span><span class="sensi-value">${s.adsSensitivity}</span></div>
-          </div>
-          <div class="sensi-footnote">
-            <span class="badge">🔞 24/7 ZAKA</span>
-            <span>⚡ HEADLOCK + GYRO TUNED</span>
-          </div>
-        `;
-      }
-
-      function addMessage(htmlContent, type) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `msg ${type}`;
-        msgDiv.innerHTML = htmlContent;
-        chatDiv.appendChild(msgDiv);
-        msgDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-
-      function sendMessage() {
-        const userText = inputField.value.trim();
-        if (userText === '') return;
-
-        // show user message
-        addMessage(`📱 ${userText}`, 'user');
-        inputField.value = '';
-
-        // loading message
-        addMessage(`⏳ compiling 14 features for <strong>${userText}</strong> ...`, 'bot');
-
-        setTimeout(() => {
-          // remove loading message
-          const msgs = chatDiv.querySelectorAll('.msg');
-          if (msgs.length > 0) {
-            const last = msgs[msgs.length - 1];
-            if (last.classList.contains('bot') && last.innerHTML.includes('⏳')) {
-              last.remove();
-            }
-          }
-
-          const sensi = generateFullSensi();
-          const statsHTML = formatSensiMessage(sensi);
-
-          addMessage(`
-            <div style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
-              <span style="background:#ff0055; padding:4px 16px; border-radius:40px; font-weight:bold;">🎯 PERFECT SENSI</span>
-              <span>for ${userText}</span>
-            </div>
-            ${statsHTML}
-          `, 'bot');
-        }, 700);
-      }
-
-      inputField.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          sendMessage();
+        // Random number generator
+        function randomNum(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
         }
-      });
 
-      inputField.focus();
+        // Generate 14 sensitivity values
+        function generateSensi() {
+            return {
+                general: randomNum(165, 215),
+                redDot: randomNum(155, 210),
+                holo: randomNum(150, 205),
+                scope2x: randomNum(140, 195),
+                scope3x: randomNum(130, 185),
+                scope4x: randomNum(125, 180),
+                scope6x: randomNum(115, 175),
+                sniper: randomNum(105, 165),
+                freeLook: randomNum(140, 200),
+                gyroGeneral: randomNum(180, 250),
+                gyroScope: randomNum(165, 235),
+                tppAim: randomNum(150, 220),
+                fppAim: randomNum(140, 210),
+                ads: randomNum(130, 190)
+            };
+        }
 
-      // bonus: video loop never shows any youtube logo because it's a video tag.
-      // we also prevent right click on video if we want (optional)
-      const video = document.getElementById('bg-video');
-      video.addEventListener('contextmenu', (e) => e.preventDefault());
-    })();
-  </script>
+        // Add message to chat
+        function addMessage(text, isUser = false, isHTML = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            
+            if (isHTML) {
+                messageDiv.innerHTML = text;
+            } else {
+                messageDiv.textContent = text;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            messageDiv.scrollIntoView({ behavior: 'smooth' });
+            return messageDiv;
+        }
+
+        // Create sensi display HTML
+        function createSensiHTML(sensi, device) {
+            return `
+                <div style="margin-bottom: 10px;">
+                    <span style="background:#ff0055; padding:5px 15px; border-radius:20px; font-weight:bold;">🎯 FOR ${device.toUpperCase()}</span>
+                </div>
+                <div class="sensi-box">
+                    <div class="sensi-grid">
+                        <div class="stat"><span class="stat-label">GENERAL</span><div class="stat-value">${sensi.general}</div></div>
+                        <div class="stat"><span class="stat-label">RED DOT</span><div class="stat-value">${sensi.redDot}</div></div>
+                        <div class="stat"><span class="stat-label">HOLO</span><div class="stat-value">${sensi.holo}</div></div>
+                        <div class="stat"><span class="stat-label">2X SCOPE</span><div class="stat-value">${sensi.scope2x}</div></div>
+                        <div class="stat"><span class="stat-label">3X SCOPE</span><div class="stat-value">${sensi.scope3x}</div></div>
+                        <div class="stat"><span class="stat-label">4X SCOPE</span><div class="stat-value">${sensi.scope4x}</div></div>
+                        <div class="stat"><span class="stat-label">6X SCOPE</span><div class="stat-value">${sensi.scope6x}</div></div>
+                        <div class="stat"><span class="stat-label">SNIPER</span><div class="stat-value">${sensi.sniper}</div></div>
+                        <div class="stat"><span class="stat-label">FREE LOOK</span><div class="stat-value">${sensi.freeLook}</div></div>
+                        <div class="stat"><span class="stat-label">GYRO GEN</span><div class="stat-value">${sensi.gyroGeneral}</div></div>
+                        <div class="stat"><span class="stat-label">GYRO SCOPE</span><div class="stat-value">${sensi.gyroScope}</div></div>
+                        <div class="stat"><span class="stat-label">TPP AIM</span><div class="stat-value">${sensi.tppAim}</div></div>
+                        <div class="stat"><span class="stat-label">FPP AIM</span><div class="stat-value">${sensi.fppAim}</div></div>
+                        <div class="stat"><span class="stat-label">ADS</span><div class="stat-value">${sensi.ads}</div></div>
+                    </div>
+                    <div class="badge-container">
+                        <span class="badge">🔞 24/7 MODE</span>
+                        <span class="badge" style="background:#7700ff;">⚡ HEADLOCK ON</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Handle send message
+        function handleSend() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            // Add user message
+            addMessage(`📱 ${text}`, true);
+            userInput.value = '';
+
+            // Add loading message
+            const loadingMsg = addMessage(`Generating 14 features ${'<span class="loading"></span>'}`, false, true);
+
+            // Generate after delay
+            setTimeout(() => {
+                // Remove loading message
+                if (loadingMsg && loadingMsg.parentNode) {
+                    loadingMsg.remove();
+                }
+
+                // Generate sensi
+                const sensi = generateSensi();
+                const sensiHTML = createSensiHTML(sensi, text);
+                
+                // Add the sensi message
+                addMessage(sensiHTML, false, true);
+            }, 1200);
+        }
+
+        // Event listeners
+        sendBtn.addEventListener('click', handleSend);
+        
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleSend();
+            }
+        });
+
+        // Focus input
+        userInput.focus();
+
+        // Make sure video plays
+        video.play().catch(e => console.log("Autoplay prevented, but that's fine"));
+    </script>
 </body>
 </html>
