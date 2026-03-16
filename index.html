@@ -3,25 +3,800 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZAKA SENSITIVITY BOT · TRICKSENSI.COM</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="styles/dark-theme.css">
-    <link rel="stylesheet" href="styles/animations.css">
-    <link rel="stylesheet" href="styles/mobile-responsive.css">
+    <title>ZAKA SENSITIVITY BOT · FREE FIRE PRO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ff3366;
+            --secondary: #6c5ce7;
+            --accent: #00d2ff;
+            --dark: #0a0c0f;
+            --darker: #050608;
+            --light: #ffffff;
+            --gray: #2a2d36;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 51, 102, 0.3);
+            --neon-glow: 0 0 20px rgba(255, 51, 102, 0.5);
+            --success: #00ff88;
+            --warning: #ffaa00;
+            --danger: #ff4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #050608;
+            color: white;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Cyber Background */
+        .cyber-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #1a1a2e, #0a0c0f);
+        }
+
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 51, 102, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 51, 102, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .app-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Header */
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bot-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .logo-text h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .version-badge {
+            background: var(--glass);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid var(--primary);
+            display: inline-block;
+        }
+
+        /* Phone Selector */
+        .phone-selector {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .phone-btn {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px 24px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .phone-btn i {
+            color: var(--primary);
+        }
+
+        .phone-btn:hover, .phone-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+
+        .phone-btn:hover i, .phone-btn.active i {
+            color: white;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1.5fr 1fr;
+            gap: 25px;
+        }
+
+        /* Video Column */
+        .video-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .video-container {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: #000;
+        }
+
+        .video-player {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .video-player:hover .video-thumbnail {
+            transform: scale(1.05);
+        }
+
+        .video-overlay-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 50%);
+        }
+
+        .sensi-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            padding: 8px 20px;
+            border-radius: 40px;
+            width: fit-content;
+            border: 1px solid var(--primary);
+        }
+
+        .live-badge {
+            background: var(--danger);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .current-sensi {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-shadow: 0 0 20px var(--primary);
+        }
+
+        .weapon-demo {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            padding: 10px 20px;
+            border-radius: 40px;
+            width: fit-content;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 3;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 5px;
+            position: relative;
+            width: 0%;
+        }
+
+        .video-stats {
+            display: flex;
+            gap: 30px;
+            padding: 15px 20px;
+            background: var(--glass);
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #aaa;
+        }
+
+        .stat-item i {
+            color: var(--primary);
+        }
+
+        /* Weapon Strip */
+        .weapon-strip {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: var(--glass);
+            border-radius: 20px;
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+
+        .weapon-strip::-webkit-scrollbar {
+            height: 5px;
+        }
+
+        .weapon-strip::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+
+        .weapon-item {
+            min-width: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 10px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .weapon-item:hover, .weapon-item.active {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.2), rgba(108, 92, 231, 0.2));
+            transform: translateY(-2px);
+        }
+
+        .weapon-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--gray);
+        }
+
+        .weapon-item span {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Generator Column */
+        .generator-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .card-header h2 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header h2 i {
+            color: var(--primary);
+        }
+
+        .phone-name-display {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Phone Specs */
+        .phone-specs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .spec {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .spec i {
+            color: var(--primary);
+        }
+
+        /* Generate Button */
+        .generate-sensi-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 15px;
+            padding: 18px;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .generate-sensi-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(255, 51, 102, 0.5);
+        }
+
+        /* Sensitivity Results */
+        .sensitivity-results {
+            margin-bottom: 30px;
+        }
+
+        .sensi-category {
+            margin-bottom: 25px;
+        }
+
+        .sensi-category h3 {
+            color: var(--primary);
+            font-size: 1rem;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .sensi-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .sensi-value {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        /* ASHELL Section */
+        .ashell-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .section-title i {
+            color: var(--warning);
+        }
+
+        .ashell-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .ashell-item {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ashell-item:hover {
+            border-color: var(--warning);
+            transform: translateY(-2px);
+        }
+
+        .ashell-item code {
+            color: var(--warning);
+            font-size: 1rem;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .ashell-desc {
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+
+        .command-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .command-input input {
+            flex: 1;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: white;
+        }
+
+        .command-input button {
+            background: linear-gradient(135deg, var(--warning), #ff8800);
+            border: none;
+            border-radius: 10px;
+            padding: 0 20px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Chat Column */
+        .chat-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .ai-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .ai-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .status-dot.online {
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        .clear-chat {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message.user-message {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ai-message .message-avatar {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .user-message .message-avatar {
+            background: linear-gradient(135deg, var(--accent), #00a8ff);
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+        }
+
+        .ai-message .message-content {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+        }
+
+        .user-message .message-content {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .chip {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 6px 15px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chip:hover {
+            background: var(--primary);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-wrapper input {
+            flex: 1;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+        }
+
+        .input-wrapper button {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: var(--primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Animated Background -->
     <div class="cyber-bg">
         <div class="grid-overlay"></div>
-        <div class="scan-lines"></div>
-        <div class="glow-particles"></div>
     </div>
 
-    <!-- Main Container -->
     <div class="app-container">
-        <!-- Header with Phone Selection -->
+        <!-- Header -->
         <header class="main-header">
             <div class="logo-area">
                 <div class="bot-avatar">
@@ -57,42 +832,39 @@
             </div>
         </header>
 
-        <!-- Main Content Grid -->
+        <!-- Main Content -->
         <div class="content-grid">
-            <!-- Left Column - Video Player (Tricksensi Style) -->
+            <!-- Video Column -->
             <div class="video-column">
                 <div class="video-card">
                     <div class="video-container">
-                        <!-- Hidden YouTube URL - Only Video Shows -->
                         <div class="video-player" id="videoPlayer">
+                            <img src="https://picsum.photos/1280/720?random=1" alt="Gameplay" class="video-thumbnail" id="videoThumbnail">
                             <div class="video-overlay-content">
-                                <div class="video-glow"></div>
                                 <div class="sensi-indicator">
                                     <span class="live-badge">LIVE</span>
                                     <span class="current-sensi" id="videoSensi">200</span>
                                     <span class="sensi-label">SENSI</span>
                                 </div>
-                                <div class="weapon-demo" id="weaponDemo">
+                                <div class="weapon-demo">
                                     <i class="fas fa-crosshairs"></i>
-                                    <span>M1887 · PRO GAMEPLAY</span>
+                                    <span id="currentWeaponDemo">UMP · PRO GAMEPLAY</span>
                                 </div>
                             </div>
-                        </div>
-                        <!-- Video Controls (Minimal) -->
-                        <div class="video-controls">
-                            <button class="control-btn" id="playPauseBtn"><i class="fas fa-play"></i></button>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 45%"></div>
+                            <div class="video-controls">
+                                <button class="control-btn" id="playPauseBtn"><i class="fas fa-pause"></i></button>
+                                <div class="progress-bar" id="progressBar">
+                                    <div class="progress-fill" id="progressFill" style="width: 45%"></div>
+                                </div>
+                                <button class="control-btn" id="fullscreenBtn"><i class="fas fa-expand"></i></button>
                             </div>
-                            <button class="control-btn" id="fullscreenBtn"><i class="fas fa-expand"></i></button>
                         </div>
                     </div>
                     
-                    <!-- Video Stats Bar -->
                     <div class="video-stats">
                         <div class="stat-item">
                             <i class="fas fa-eye"></i>
-                            <span>2.1M views</span>
+                            <span id="viewCount">2.1M views</span>
                         </div>
                         <div class="stat-item">
                             <i class="fas fa-calendar"></i>
@@ -105,44 +877,11 @@
                     </div>
                 </div>
 
-                <!-- Weapon Quick Select -->
-                <div class="weapon-strip">
-                    <div class="weapon-item active" data-weapon="ump">
-                        <img src="https://via.placeholder.com/40x40/ff4444/ffffff?text=UMP" alt="UMP">
-                        <span>UMP</span>
-                    </div>
-                    <div class="weapon-item" data-weapon="xm8">
-                        <img src="https://via.placeholder.com/40x40/44ff44/000000?text=XM8" alt="XM8">
-                        <span>XM8</span>
-                    </div>
-                    <div class="weapon-item" data-weapon="m1887">
-                        <img src="https://via.placeholder.com/40x40/4444ff/ffffff?text=M18" alt="M1887">
-                        <span>M1887</span>
-                    </div>
-                    <div class="weapon-item" data-weapon="scar">
-                        <img src="https://via.placeholder.com/40x40/ff44ff/ffffff?text=SCAR" alt="SCAR">
-                        <span>SCAR</span>
-                    </div>
-                    <div class="weapon-item" data-weapon="ak47">
-                        <img src="https://via.placeholder.com/40x40/ffaa44/000000?text=AK" alt="AK47">
-                        <span>AK47</span>
-                    </div>
-                    <div class="weapon-item" data-weapon="m4a1">
-                        <img src="https://via.placeholder.com/40x40/44aaff/ffffff?text=M4" alt="M4A1">
-                        <span>M4A1</span>
-                    </div>
-                    <div class="weapon-item" data-weapon="mp40">
-                        <img src="https://via.placeholder.com/40x40/aaff44/000000?text=MP40" alt="MP40">
-                        <span>MP40</span>
-                    </div>
-                    <div class="weapon-item" data-weapon="sks">
-                        <img src="https://via.placeholder.com/40x40/ff8844/000000?text=SKS" alt="SKS">
-                        <span>SKS</span>
-                    </div>
-                </div>
+                <!-- Weapon Strip with Random Images -->
+                <div class="weapon-strip" id="weaponStrip"></div>
             </div>
 
-            <!-- Middle Column - Sensitivity Generator -->
+            <!-- Generator Column -->
             <div class="generator-column">
                 <div class="generator-card">
                     <div class="card-header">
@@ -150,22 +889,19 @@
                         <div class="phone-name-display" id="selectedPhone">iPhone 15</div>
                     </div>
 
-                    <!-- Phone Specs Display -->
                     <div class="phone-specs" id="phoneSpecs">
                         <div class="spec"><i class="fas fa-microchip"></i> A16 Bionic</div>
                         <div class="spec"><i class="fas fa-memory"></i> 6GB RAM</div>
                         <div class="spec"><i class="fas fa-tachometer-alt"></i> 120Hz</div>
-                        <div class="spec"><i class="fas fa-dragon"></i> 450 DPI</div>
+                        <div class="spec"><i class="fas fa-dragon"></i> 460 DPI</div>
                     </div>
 
-                    <!-- Generate Button -->
                     <button class="generate-sensi-btn" id="generateSensi">
                         <i class="fas fa-bolt"></i>
                         <span>GENERATE FOR THIS PHONE</span>
                         <i class="fas fa-chevron-right"></i>
                     </button>
 
-                    <!-- Sensitivity Results -->
                     <div class="sensitivity-results" id="sensiResults">
                         <div class="sensi-category">
                             <h3>GENERAL</h3>
@@ -197,45 +933,18 @@
 
                         <div class="sensi-category">
                             <h3>WEAPON-SPECIFIC</h3>
-                            <div class="weapon-sensi-list" id="weaponSensiList">
-                                <!-- Generated dynamically -->
-                            </div>
+                            <div class="weapon-sensi-list" id="weaponSensiList"></div>
                         </div>
                     </div>
 
-                    <!-- ASHELL Commands Section -->
+                    <!-- ASHELL Commands -->
                     <div class="ashell-section">
                         <div class="section-title">
                             <i class="fas fa-terminal"></i>
                             <h3>ASHELL COMMANDS</h3>
                         </div>
                         
-                        <div class="ashell-grid">
-                            <div class="ashell-item">
-                                <code>upscale 1.9</code>
-                                <span class="ashell-desc">Graphics boost</span>
-                            </div>
-                            <div class="ashell-item">
-                                <code>fps 90</code>
-                                <span class="ashell-desc">Unlock 90 FPS</span>
-                            </div>
-                            <div class="ashell-item">
-                                <code>smooth 2.0</code>
-                                <span class="ashell-desc">Smoothness +</span>
-                            </div>
-                            <div class="ashell-item">
-                                <code>render 120</code>
-                                <span class="ashell-desc">120% render</span>
-                            </div>
-                            <div class="ashell-item">
-                                <code>unlock 240hz</code>
-                                <span class="ashell-desc">240Hz polling</span>
-                            </div>
-                            <div class="ashell-item">
-                                <code>gpu turbo</code>
-                                <span class="ashell-desc">GPU overclock</span>
-                            </div>
-                        </div>
+                        <div class="ashell-grid" id="ashellGrid"></div>
                         
                         <div class="command-input">
                             <input type="text" placeholder="Enter ASHELL command..." id="ashellInput">
@@ -245,7 +954,7 @@
                 </div>
             </div>
 
-            <!-- Right Column - AI Chat -->
+            <!-- Chat Column -->
             <div class="chat-column">
                 <div class="chat-card">
                     <div class="chat-header">
@@ -256,12 +965,10 @@
                             <div class="ai-info">
                                 <h3>ZAKA AI</h3>
                                 <span class="status-dot online"></span>
-                                <span class="status-text">Online · 0.2ms</span>
+                                <span class="status-text">Online</span>
                             </div>
                         </div>
-                        <div class="chat-actions">
-                            <button class="clear-chat"><i class="fas fa-trash"></i></button>
-                        </div>
+                        <button class="clear-chat" id="clearChat"><i class="fas fa-trash"></i></button>
                     </div>
 
                     <div class="chat-messages" id="chatMessages">
@@ -278,10 +985,10 @@
 
                     <div class="chat-input-area">
                         <div class="suggestion-chips">
-                            <span class="chip">Best for UMP?</span>
-                            <span class="chip">M1887 sensitivity</span>
-                            <span class="chip">ASHELL commands</span>
-                            <span class="chip">90 FPS config</span>
+                            <span class="chip" data-question="Best for UMP?">Best for UMP?</span>
+                            <span class="chip" data-question="M1887 sensitivity">M1887 sensitivity</span>
+                            <span class="chip" data-question="ASHELL commands">ASHELL commands</span>
+                            <span class="chip" data-question="90 FPS config">90 FPS config</span>
                         </div>
                         <div class="input-wrapper">
                             <input type="text" placeholder="Ask Zaka AI..." id="chatInput">
@@ -292,26 +999,473 @@
             </div>
         </div>
 
-        <!-- Weapon Details Modal -->
+        <!-- Weapon Modal -->
         <div class="modal" id="weaponModal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 id="weaponModalTitle">UMP Sensitivity</h2>
-                    <button class="close-modal"><i class="fas fa-times"></i></button>
+                    <button class="close-modal" id="closeModal"><i class="fas fa-times"></i></button>
                 </div>
-                <div class="modal-body" id="weaponModalBody">
-                    <!-- Dynamic content -->
-                </div>
+                <div class="modal-body" id="weaponModalBody"></div>
             </div>
         </div>
     </div>
 
-    <script src="main.js"></script>
-    <script src="weapon-data.js"></script>
-    <script src="phone-profiles.js"></script>
-    <script src="ashell-commands.js"></script>
-    <script src="sensi-generator.js"></script>
-    <script src="video-player.js"></script>
-    <script src="ai-chat.js"></script>
+    <script>
+        // ==================== DATA ====================
+        const phoneProfiles = {
+            iphone15: {
+                name: 'iPhone 15',
+                processor: 'A16 Bionic',
+                ram: '6GB',
+                refreshRate: '120Hz',
+                dpi: 460,
+                baseSensi: 190
+            },
+            s23: {
+                name: 'Galaxy S23',
+                processor: 'Snapdragon 8 Gen 2',
+                ram: '8GB',
+                refreshRate: '120Hz',
+                dpi: 425,
+                baseSensi: 185
+            },
+            rog6: {
+                name: 'ROG 6',
+                processor: 'Snapdragon 8+ Gen 1',
+                ram: '12GB',
+                refreshRate: '165Hz',
+                dpi: 395,
+                baseSensi: 195
+            },
+            redmi12: {
+                name: 'Redmi 12',
+                processor: 'Helio G88',
+                ram: '4GB',
+                refreshRate: '90Hz',
+                dpi: 395,
+                baseSensi: 170
+            },
+            poco: {
+                name: 'Poco F5',
+                processor: 'Snapdragon 7+ Gen 2',
+                ram: '8GB',
+                refreshRate: '120Hz',
+                dpi: 446,
+                baseSensi: 188
+            }
+        };
+
+        const weaponData = {
+            ump: { name: 'UMP', type: 'SMG', recommended: 185 },
+            xm8: { name: 'XM8', type: 'AR', recommended: 178 },
+            m1887: { name: 'M1887', type: 'Shotgun', recommended: 195 },
+            scar: { name: 'SCAR', type: 'AR', recommended: 180 },
+            ak47: { name: 'AK47', type: 'AR', recommended: 175 },
+            m4a1: { name: 'M4A1', type: 'AR', recommended: 182 },
+            mp40: { name: 'MP40', type: 'SMG', recommended: 188 },
+            sks: { name: 'SKS', type: 'DMR', recommended: 165 },
+            dragunov: { name: 'Dragunov', type: 'Sniper', recommended: 145 },
+            awm: { name: 'AWM', type: 'Sniper', recommended: 140 },
+            vector: { name: 'Vector', type: 'SMG', recommended: 190 },
+            thompson: { name: 'Thompson', type: 'SMG', recommended: 183 },
+            m1014: { name: 'M1014', type: 'Shotgun', recommended: 188 },
+            spas12: { name: 'SPAS-12', type: 'Shotgun', recommended: 192 },
+            kar98k: { name: 'Kar98k', type: 'Sniper', recommended: 138 }
+        };
+
+        const ashellCommands = {
+            'upscale 1.9': 'Boost graphics quality',
+            'fps 90': 'Unlock 90 FPS',
+            'smooth 2.0': 'Enable smoothness',
+            'render 120': 'Increase render scale',
+            'unlock 240hz': '240Hz touch sampling',
+            'gpu turbo': 'Overclock GPU'
+        };
+
+        // ==================== STATE ====================
+        let selectedPhone = 'iphone15';
+        let selectedWeapon = 'ump';
+        let isPlaying = true;
+        let progress = 45;
+        let progressInterval;
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            initWeaponStrip();
+            initAshellGrid();
+            initEventListeners();
+            startProgressSimulation();
+            updatePhoneSpecs('iphone15');
+            generateSensitivityForPhone();
+        });
+
+        // ==================== WEAPON STRIP ====================
+        function initWeaponStrip() {
+            const strip = document.getElementById('weaponStrip');
+            strip.innerHTML = '';
+            
+            Object.entries(weaponData).forEach(([id, weapon], index) => {
+                const item = document.createElement('div');
+                item.className = `weapon-item ${index === 0 ? 'active' : ''}`;
+                item.dataset.weapon = id;
+                
+                // Random image for each gun
+                const randomNum = 100 + index;
+                item.innerHTML = `
+                    <img src="https://picsum.photos/40/40?random=${randomNum}" alt="${weapon.name}" class="weapon-img">
+                    <span>${weapon.name}</span>
+                `;
+                
+                item.addEventListener('click', () => selectWeapon(id));
+                strip.appendChild(item);
+            });
+        }
+
+        // ==================== ASHELL GRID ====================
+        function initAshellGrid() {
+            const grid = document.getElementById('ashellGrid');
+            grid.innerHTML = '';
+            
+            Object.entries(ashellCommands).forEach(([cmd, desc]) => {
+                const item = document.createElement('div');
+                item.className = 'ashell-item';
+                item.innerHTML = `
+                    <code>${cmd}</code>
+                    <span class="ashell-desc">${desc}</span>
+                `;
+                item.addEventListener('click', () => {
+                    document.getElementById('ashellInput').value = cmd;
+                });
+                grid.appendChild(item);
+            });
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        function initEventListeners() {
+            // Phone selection
+            document.querySelectorAll('.phone-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.phone-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedPhone = btn.dataset.phone;
+                    document.getElementById('selectedPhone').textContent = btn.querySelector('span').textContent;
+                    updatePhoneSpecs(selectedPhone);
+                });
+            });
+
+            // Generate button
+            document.getElementById('generateSensi').addEventListener('click', generateSensitivityForPhone);
+
+            // Video controls
+            document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
+            document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
+            document.getElementById('progressBar').addEventListener('click', seekVideo);
+            document.getElementById('videoPlayer').addEventListener('click', togglePlayPause);
+
+            // ASHELL execute
+            document.getElementById('executeAshell').addEventListener('click', executeAshellCommand);
+            document.getElementById('ashellInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') executeAshellCommand();
+            });
+
+            // Chat
+            document.getElementById('sendMessage').addEventListener('click', sendChatMessage);
+            document.getElementById('chatInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendChatMessage();
+            });
+            document.getElementById('clearChat').addEventListener('click', clearChat);
+
+            // Suggestion chips
+            document.querySelectorAll('.chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    document.getElementById('chatInput').value = chip.dataset.question;
+                    sendChatMessage();
+                });
+            });
+
+            // Modal close
+            document.getElementById('closeModal').addEventListener('click', () => {
+                document.getElementById('weaponModal').classList.remove('show');
+            });
+        }
+
+        // ==================== PHONE SPECS ====================
+        function updatePhoneSpecs(phoneId) {
+            const specs = phoneProfiles[phoneId];
+            const container = document.getElementById('phoneSpecs');
+            container.innerHTML = `
+                <div class="spec"><i class="fas fa-microchip"></i> ${specs.processor}</div>
+                <div class="spec"><i class="fas fa-memory"></i> ${specs.ram}</div>
+                <div class="spec"><i class="fas fa-tachometer-alt"></i> ${specs.refreshRate}</div>
+                <div class="spec"><i class="fas fa-dragon"></i> ${specs.dpi} DPI</div>
+            `;
+        }
+
+        // ==================== SENSITIVITY GENERATOR ====================
+        function generateSensitivityForPhone() {
+            const phone = phoneProfiles[selectedPhone];
+            const baseSensi = phone.baseSensi;
+            
+            // Calculate sensitivities (max 200)
+            const general = Math.min(200, Math.round(baseSensi * 1.02));
+            const redDot = Math.min(200, Math.round(general * 1.04));
+            const scope2x = Math.min(200, Math.round(general * 0.96));
+            const scope4x = Math.min(200, Math.round(general * 0.84));
+            const freeLook = Math.min(200, Math.round(general * 0.89));
+            const sniper = Math.min(200, Math.round(general * 0.76));
+            
+            // Update display
+            document.getElementById('generalSensi').textContent = general;
+            document.getElementById('redDotSensi').textContent = redDot;
+            document.getElementById('scope2xSensi').textContent = scope2x;
+            document.getElementById('scope4xSensi').textContent = scope4x;
+            document.getElementById('freeLookSensi').textContent = freeLook;
+            document.getElementById('sniperSensi').textContent = sniper;
+            document.getElementById('videoSensi').textContent = general;
+            
+            // Update weapon-specific
+            updateWeaponSensitivities(general);
+            
+            // Add animation
+            animateSensiChange();
+            
+            // Add AI message
+            addAIMessage(`✅ Generated sensitivity for ${phone.name}! General: ${general}, Red Dot: ${redDot}`);
+        }
+
+        function updateWeaponSensitivities(baseSensi) {
+            const weaponList = document.getElementById('weaponSensiList');
+            weaponList.innerHTML = '';
+            
+            const weapons = ['UMP', 'XM8', 'M1887', 'SCAR', 'AK47', 'MP40'];
+            weapons.forEach(weapon => {
+                let sensi = baseSensi;
+                if (weapon === 'UMP') sensi = Math.min(200, baseSensi + 5);
+                if (weapon === 'XM8') sensi = Math.min(200, baseSensi - 2);
+                if (weapon === 'M1887') sensi = Math.min(200, baseSensi + 10);
+                if (weapon === 'MP40') sensi = Math.min(200, baseSensi + 8);
+                
+                const row = document.createElement('div');
+                row.className = 'sensi-row';
+                row.innerHTML = `
+                    <span>${weapon}</span>
+                    <span class="sensi-value">${sensi}</span>
+                `;
+                weaponList.appendChild(row);
+            });
+        }
+
+        function animateSensiChange() {
+            document.querySelectorAll('.sensi-value').forEach(el => {
+                el.style.transform = 'scale(1.2)';
+                el.style.transition = 'transform 0.2s';
+                setTimeout(() => {
+                    el.style.transform = 'scale(1)';
+                }, 200);
+            });
+        }
+
+        // ==================== WEAPON SELECTION ====================
+        function selectWeapon(weaponId) {
+            selectedWeapon = weaponId;
+            
+            document.querySelectorAll('.weapon-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.weapon === weaponId) {
+                    item.classList.add('active');
+                }
+            });
+            
+            const weapon = weaponData[weaponId];
+            document.getElementById('currentWeaponDemo').textContent = `${weapon.name} · PRO GAMEPLAY`;
+            
+            // Change video thumbnail
+            const randomNum = Math.floor(Math.random() * 1000);
+            document.getElementById('videoThumbnail').src = `https://picsum.photos/1280/720?random=${randomNum}`;
+            
+            showWeaponDetails(weaponId);
+        }
+
+        function showWeaponDetails(weaponId) {
+            const weapon = weaponData[weaponId];
+            const modal = document.getElementById('weaponModal');
+            const modalBody = document.getElementById('weaponModalBody');
+            
+            document.getElementById('weaponModalTitle').textContent = `${weapon.name} Sensitivity Guide`;
+            
+            modalBody.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: var(--primary); margin-bottom: 10px;">Best Sensitivity</h4>
+                    <div class="sensi-row">
+                        <span>Recommended</span>
+                        <span class="sensi-value">${weapon.recommended}</span>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: var(--primary); margin-bottom: 10px;">Loadout Tips</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 8px;"><i class="fas fa-check" style="color: var(--success); margin-right: 10px;"></i>Use high sensitivity for quick aim</li>
+                        <li style="margin-bottom: 8px;"><i class="fas fa-check" style="color: var(--success); margin-right: 10px;"></i>Enable gyroscope for better control</li>
+                        <li style="margin-bottom: 8px;"><i class="fas fa-check" style="color: var(--success); margin-right: 10px;"></i>Practice in training mode</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="color: var(--primary); margin-bottom: 10px;">ASHELL Commands</h4>
+                    <div class="ashell-item"><code>upscale 1.9</code></div>
+                    <div class="ashell-item"><code>fps 90</code></div>
+                </div>
+            `;
+            
+            modal.classList.add('show');
+        }
+
+        // ==================== VIDEO PLAYER ====================
+        function togglePlayPause() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('playPauseBtn');
+            btn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+            
+            if (isPlaying) {
+                startProgressSimulation();
+            } else {
+                clearInterval(progressInterval);
+            }
+        }
+
+        function startProgressSimulation() {
+            if (progressInterval) clearInterval(progressInterval);
+            progressInterval = setInterval(() => {
+                if (isPlaying) {
+                    progress = (progress + 0.1) % 100;
+                    document.getElementById('progressFill').style.width = `${progress}%`;
+                }
+            }, 100);
+        }
+
+        function seekVideo(e) {
+            const bar = document.getElementById('progressBar');
+            const rect = bar.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            progress = pos * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+
+        function toggleFullscreen() {
+            const video = document.getElementById('videoPlayer');
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                video.requestFullscreen();
+            }
+        }
+
+        // ==================== ASHELL COMMANDS ====================
+        function executeAshellCommand() {
+            const input = document.getElementById('ashellInput');
+            const command = input.value.trim();
+            
+            if (command) {
+                addUserMessage(`ASHELL: ${command}`);
+                
+                setTimeout(() => {
+                    if (ashellCommands[command]) {
+                        addAIMessage(`✅ Command executed: ${command}\n${ashellCommands[command]}`);
+                    } else if (command.includes('upscale')) {
+                        addAIMessage(`✅ Graphics upscaled to 1.9x • FPS boosted`);
+                    } else if (command.includes('fps')) {
+                        addAIMessage(`✅ FPS unlocked to 90 • Smooth gameplay enabled`);
+                    } else {
+                        addAIMessage(`⚠️ Unknown command. Try: upscale 1.9, fps 90`);
+                    }
+                }, 500);
+                
+                input.value = '';
+            }
+        }
+
+        // ==================== CHAT ====================
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addUserMessage(message);
+                
+                setTimeout(() => {
+                    generateAIResponse(message);
+                }, 500);
+                
+                input.value = '';
+            }
+        }
+
+        function addUserMessage(message) {
+            const chat = document.getElementById('chatMessages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message user-message';
+            msgDiv.innerHTML = `
+                <div class="message-avatar"><i class="fas fa-user"></i></div>
+                <div class="message-content"><p>${message}</p><span class="message-time">Just now</span></div>
+            `;
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function addAIMessage(message) {
+            const chat = document.getElementById('chatMessages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message ai-message';
+            msgDiv.innerHTML = `
+                <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                <div class="message-content"><p>${message.replace(/\n/g, '<br>')}</p><span class="message-time">Just now</span></div>
+            `;
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function generateAIResponse(message) {
+            const lowerMsg = message.toLowerCase();
+            let response = '';
+            
+            if (lowerMsg.includes('ump')) {
+                response = "For UMP, use 185-190 sensitivity. Red dot at 185, 2x at 170. Try ASHELL: upscale 1.9!";
+            } else if (lowerMsg.includes('xm8')) {
+                response = "XM8 works best with 175-185 sensitivity. Use 4x at 160.";
+            } else if (lowerMsg.includes('m1887')) {
+                response = "M1887 shotgun needs 195-200 sensitivity for quick flicks!";
+            } else if (lowerMsg.includes('fps') || lowerMsg.includes('90')) {
+                response = "To unlock 90 FPS, use ASHELL command: fps 90";
+            } else if (lowerMsg.includes('ashell')) {
+                response = "Available commands: upscale 1.9, fps 90, smooth 2.0, render 120, gpu turbo";
+            } else if (lowerMsg.includes('hello') || lowerMsg.includes('hi')) {
+                response = "Hello! I'm Zaka AI. Ask me about sensitivity or weapons!";
+            } else {
+                response = "I can help with sensitivity settings and ASHELL commands!";
+            }
+            
+            addAIMessage(response);
+        }
+
+        function clearChat() {
+            const chat = document.getElementById('chatMessages');
+            chat.innerHTML = `
+                <div class="message ai-message">
+                    <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                    <div class="message-content"><p>Chat cleared! How can I help you?</p><span class="message-time">Just now</span></div>
+                </div>
+            `;
+        }
+
+        // ==================== VIEW COUNT SIMULATION ====================
+        setInterval(() => {
+            const viewElement = document.getElementById('viewCount');
+            const currentViews = parseInt(viewElement.textContent.replace(/[^0-9]/g, ''));
+            const newViews = currentViews + Math.floor(Math.random() * 100);
+            viewElement.textContent = newViews.toLocaleString() + ' views';
+        }, 10000);
+    </script>
 </body>
 </html>
