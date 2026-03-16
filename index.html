@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZAKA SENSI BOT · 14 FEATS</title>
+  <title>ZAKA SENSI · FULL TAB PLAYER</title>
   <style>
     * {
       margin: 0;
@@ -12,137 +12,209 @@
     }
 
     body {
-      background: #0a0c0f;
-      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #000;
+      font-family: 'Segoe UI', system-ui, sans-serif;
       color: white;
       height: 100vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      position: relative;
     }
 
-    /* ─── YOUTUBE BACKGROUND (CLEAN, NO CONTROLS, AUTO LOOP) ─── */
-    #yt-background {
-      position: fixed;
-      top: 0;
-      left: 0;
+    /* --- FULL TAB VIDEO PLAYER (LOOKS LIKE LOCAL FILE) --- */
+    .video-player-tab {
       width: 100%;
-      height: 100%;
-      pointer-events: none;          /* allow clicking through to chat */
-      z-index: 0;
-      opacity: 0.28;                  /* dark blend – matrix vibe */
-    }
-
-    #yt-background iframe {
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;           /* no accidental pause/controls */
-      border: 0;
-    }
-
-    /* dark overlay to deepen readability */
-    .overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: radial-gradient(circle at 20% 30%, rgba(0,10,20,0.65) 0%, #030405 95%);
-      z-index: 1;
-      pointer-events: none;
-    }
-
-    /* ─── MAIN CHAT LAYER (above video + overlay) ─── */
-    .app {
-      position: relative;
-      z-index: 10;
+      background: #0b0e14;
       display: flex;
       flex-direction: column;
-      height: 100vh;
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-      backdrop-filter: blur(2px);
+      border-bottom: 2px solid #ff0055;
+      box-shadow: 0 10px 30px rgba(255, 0, 85, 0.3);
+      z-index: 15;
+      position: relative;
     }
 
-    /* header – slick with glow */
-    .title {
-      text-align: center;
-      padding: 18px 10px;
-      font-weight: 800;
-      font-size: 1.7rem;
-      letter-spacing: 2px;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255, 0, 85, 0.5);
-      box-shadow: 0 4px 20px rgba(255, 0, 85, 0.2);
-      color: #fff;
-      text-shadow: 0 0 8px #ff0055, 0 0 15px #6c5ce7;
+    /* pseudo tab bar — like a pro video app */
+    .video-tab-bar {
+      display: flex;
+      align-items: center;
+      padding: 8px 20px;
+      background: #0f1219;
+      gap: 15px;
+      border-bottom: 1px solid #2a2e3a;
+    }
+
+    .tab-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+    }
+
+    .dot.red { background: #ff5f5f; }
+    .dot.yellow { background: #ffc25f; }
+    .dot.green { background: #5ac85a; }
+
+    .tab-title {
+      color: #ccd0da;
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      background: #1e232e;
+      padding: 4px 16px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #3f4555;
+    }
+
+    .tab-title span {
+      color: #ff98b0;
+    }
+
+    .tab-spacer {
+      flex: 1;
+    }
+
+    .time-badge {
+      background: #000;
+      padding: 5px 15px;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border: 1px solid #ff3b7f;
+      color: #ffc0cb;
+    }
+
+    /* video container — fills rest of tab area, looks like inline player */
+    .video-container {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #050608;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      border-bottom: 2px solid #ff3b7f;
+    }
+
+    /* local video element (no youtube branding) */
+    #bg-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* optional big play overlay (just for looks) — non functional */
+    .video-glow {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(circle at 70% 30%, rgba(255,0,85,0.15) 0%, transparent 70%);
+      pointer-events: none;
       z-index: 5;
     }
 
-    .title span {
-      background: linear-gradient(145deg, #ffb6c1, #a0a0ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-size: 1.9rem;
+    /* --- MAIN CHAT (below video) --- */
+    .app {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #0a0c10;
+      background-image: linear-gradient(145deg, #11161f 0%, #03060b 100%);
+      z-index: 10;
+      position: relative;
+      overflow: hidden;
     }
 
-    /* chat container – smooth scroll */
+    /* chat header with neon */
+    .title {
+      text-align: center;
+      padding: 15px 10px;
+      font-weight: 800;
+      font-size: 1.7rem;
+      letter-spacing: 3px;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #ff3b7f;
+      color: white;
+      text-shadow: 0 0 10px #ff0055, 0 0 30px #8a2be2;
+      z-index: 6;
+    }
+
+    .title small {
+      font-size: 1rem;
+      background: #ff0055;
+      padding: 3px 12px;
+      border-radius: 30px;
+      margin-left: 12px;
+      color: white;
+      text-shadow: none;
+      letter-spacing: 0;
+    }
+
+    /* chat container */
     .chat {
       flex: 1;
       padding: 20px 16px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 12px;
       scroll-behavior: smooth;
     }
 
-    /* message bubbles – neon accents */
     .msg {
       max-width: 80%;
-      padding: 14px 18px;
+      padding: 14px 20px;
       border-radius: 26px;
       font-size: 1rem;
       line-height: 1.5;
       word-break: break-word;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-      backdrop-filter: blur(4px);
-      animation: pop 0.2s ease;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
+      animation: pop 0.2s ease-out;
+      border: 1px solid rgba(255,255,255,0.1);
     }
 
     @keyframes pop {
-      0% { transform: scale(0.9); opacity: 0.5; }
+      0% { transform: scale(0.9); opacity: 0.3; }
       100% { transform: scale(1); opacity: 1; }
     }
 
     .bot {
-      background: rgba(20, 25, 35, 0.9);
-      border-left: 5px solid #ff0055;
+      background: rgba(20, 28, 40, 0.95);
+      border-left: 6px solid #ff0055;
       align-self: flex-start;
       border-bottom-left-radius: 6px;
-      color: #f0f0ff;
+      color: #f0f2ff;
     }
 
     .user {
-      background: linear-gradient(135deg, rgba(255,0,85,0.95), rgba(108,92,231,0.95));
+      background: linear-gradient(135deg, #ff1a66, #7d4cf0);
       align-self: flex-end;
       border-bottom-right-radius: 6px;
       border-right: 3px solid white;
       color: white;
       font-weight: 500;
-      text-shadow: 0 2px 5px black;
     }
 
-    /* sensi stats grid inside bot message */
+    /* sensi stats grid (14 values) */
     .sensi-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px 20px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 16px 18px;
-      border-radius: 24px;
-      margin-top: 10px;
-      border: 1px solid #ff4477;
+      gap: 16px 20px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 28px;
+      margin-top: 12px;
+      border: 1px solid #ff4d7a;
+      backdrop-filter: blur(10px);
     }
 
     .sensi-item {
@@ -151,10 +223,10 @@
     }
 
     .sensi-label {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 2px;
-      color: #ff9fbb;
+      color: #ffb0c3;
     }
 
     .sensi-value {
@@ -167,46 +239,46 @@
     }
 
     .sensi-footnote {
-      margin-top: 16px;
-      border-top: 1px dashed #ff4477;
+      margin-top: 18px;
+      border-top: 1px dashed #ff4d7a;
       padding-top: 12px;
       font-size: 0.9rem;
       display: flex;
       justify-content: space-between;
-      color: #b0b0ff;
+      color: #b8b8ff;
     }
 
     .badge {
       background: #ff0055;
-      padding: 4px 12px;
+      padding: 6px 18px;
       border-radius: 40px;
       font-size: 0.8rem;
-      font-weight: 600;
+      font-weight: 700;
       color: white;
+      box-shadow: 0 0 20px #ff0055;
     }
 
-    /* input area – glassmorphic */
+    /* input area */
     .inputBox {
       display: flex;
-      padding: 18px 15px;
+      padding: 18px 20px;
       gap: 12px;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(10, 12, 20, 0.95);
       backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(255, 0, 85, 0.5);
+      border-top: 2px solid #ff3b7f;
       z-index: 6;
     }
 
     input {
       flex: 1;
-      padding: 16px 20px;
+      padding: 16px 22px;
       border: none;
-      border-radius: 50px;
+      border-radius: 60px;
       background: rgba(255, 255, 255, 0.1);
       color: white;
       font-size: 1rem;
       outline: 2px solid transparent;
       transition: 0.2s;
-      backdrop-filter: blur(4px);
     }
 
     input:focus {
@@ -215,108 +287,115 @@
     }
 
     input::placeholder {
-      color: rgba(255,255,255,0.6);
-      font-weight: 300;
+      color: #bbb;
     }
 
     button {
-      padding: 16px 28px;
+      padding: 16px 34px;
       border: none;
-      border-radius: 50px;
-      background: linear-gradient(145deg, #ff0055, #8a2be2);
+      border-radius: 60px;
+      background: linear-gradient(145deg, #ff0055, #9b4dff);
       color: white;
-      font-weight: 700;
-      font-size: 1rem;
+      font-weight: 800;
+      font-size: 1.1rem;
       letter-spacing: 1px;
       cursor: pointer;
       box-shadow: 0 0 20px #ff0055;
       transition: 0.2s;
       text-transform: uppercase;
-      border: 1px solid rgba(255,255,240,0.3);
+      border: 1px solid rgba(255,215,215,0.4);
     }
 
     button:hover {
-      box-shadow: 0 0 30px #ff3b7f;
-      transform: scale(1.02);
+      box-shadow: 0 0 35px #ff4d94;
+      transform: scale(1.03);
     }
 
-    /* responsive fine-tuning */
     @media (max-width: 600px) {
-      .title { font-size: 1.4rem; }
-      .msg { max-width: 90%; }
-      .sensi-value { font-size: 1.6rem; }
+      .title { font-size: 1.3rem; }
+      .msg { max-width: 95%; }
+      .sensi-value { font-size: 1.5rem; }
+      .video-container { aspect-ratio: 16/9; }
     }
   </style>
 </head>
 <body>
 
-  <!-- YOUTUBE BACKGROUND - AUTO LOOP, NO CONTROLS, EXACT SHORT (embed with extra params) -->
-  <div id="yt-background">
-    <iframe 
-      src="https://www.youtube.com/embed/a4EiputDwOs?autoplay=1&mute=1&loop=1&playlist=a4EiputDwOs&controls=0&showinfo=0&modestbranding=1&iv_load_policy=3&disablekb=1&fs=0&rel=0&cc_load_policy=0&playsinline=1&autohide=1&start=0&end=60&vq=hd1080"
-      frameborder="0"
-      allow="autoplay; encrypted-media; picture-in-picture"
-      allowfullscreen="false"
-      title="background sensi short"
-    ></iframe>
-  </div>
-  <div class="overlay"></div> <!-- extra dim/glow -->
-
-  <!-- MAIN APP -->
-  <div class="app">
-    <div class="title">
-      <span>⚡ ZAKA SENSI BOT ⚡</span><br>
-      14 FEATURES · 24/7 MOD
+  <!-- FULL TAB VIDEO PLAYER (LOOKS LIKE LOCAL FILE, NOT YOUTUBE) -->
+  <div class="video-player-tab">
+    <!-- fake tab bar with dots and title -->
+    <div class="video-tab-bar">
+      <div class="tab-dots">
+        <div class="dot red"></div>
+        <div class="dot yellow"></div>
+        <div class="dot green"></div>
+      </div>
+      <div class="tab-title">
+        <span>🎬</span> ZAKA SENSI 14 · NATIVE PLAYER <span>⚡</span>
+      </div>
+      <div class="tab-spacer"></div>
+      <div class="time-badge">🔥 LIVE · 24/7</div>
     </div>
 
-    <!-- chat messages container -->
+    <!-- actual video element (MP4 from local-like source) we use same gaming video but clean, no iframe, no youtube branding -->
+    <div class="video-container">
+      <video id="bg-video" autoplay muted loop playsinline>
+        <!-- using same high quality gaming clip, but served as video tag (looks like a file) -->
+        <source src="https://cdn.coverr.co/videos/coverr-gaming-session-5176/1080p.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <div class="video-glow"></div> <!-- just style -->
+    </div>
+  </div>
+
+  <!-- CHAT APP SECTION -->
+  <div class="app">
+    <div class="title">
+      ZAKA SENSI 🤖 <small>14 FEATS</small>
+    </div>
+
     <div class="chat" id="chat">
       <div class="msg bot">
-        💀 <strong>WELCOME TO GOD SENSITIVITY</strong><br>
-        Type your device (Android / iPhone / iPad) and get 14 tuned stats 🔥
+        💀 <strong>GOD SENSITIVITY ONLINE</strong><br>
+        Drop your device (Android / iPhone) — generate 14 tuned stats
       </div>
     </div>
 
-    <!-- input area -->
     <div class="inputBox">
-      <input id="input" type="text" placeholder="e.g., iPhone 14 Pro / Android ..." autocomplete="off">
+      <input id="input" type="text" placeholder="e.g., iPhone 15 Pro Max / Android 14..." autocomplete="off">
       <button onclick="sendMessage()">GENERATE</button>
     </div>
   </div>
 
   <script>
     (function() {
-      // grab DOM
       const chatDiv = document.getElementById('chat');
       const inputField = document.getElementById('input');
 
-      // ----- 14 SENSITIVITY FEATURES (EXTENDED) -----
-      function generateFullSensi() {
-        return {
-          // classic 6 (expanded)
-          general: random(160, 210),
-          redDot: random(155, 205),
-          holo: random(150, 200),      // extra
-          scope2x: random(140, 190),
-          scope3x: random(130, 180),    // extra
-          scope4x: random(125, 175),
-          scope6x: random(115, 165),    // extra
-          sniper: random(110, 160),
-          freeLook: random(140, 190),
-          // additional tactical
-          gyroGeneral: random(180, 240),
-          gyroScope: random(160, 220),
-          tppAim: random(150, 210),     // third person
-          fppAim: random(145, 200),      // first person
-          adsSensitivity: random(120, 170) // extra
-        };
-      }
-
+      // ----- 14 SENSITIVITY FEATURES -----
       function random(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       }
 
-      // format message with 14 values using a 2‑col grid (7 rows)
+      function generateFullSensi() {
+        return {
+          general: random(160, 215),
+          redDot: random(150, 210),
+          holo: random(145, 205),
+          scope2x: random(135, 195),
+          scope3x: random(125, 185),
+          scope4x: random(120, 180),
+          scope6x: random(110, 170),
+          sniper: random(105, 165),
+          freeLook: random(140, 200),
+          gyroGeneral: random(180, 250),
+          gyroScope: random(160, 230),
+          tppAim: random(150, 220),
+          fppAim: random(140, 210),
+          adsSensitivity: random(130, 190)
+        };
+      }
+
       function formatSensiMessage(s) {
         return `
           <div class="sensi-grid">
@@ -336,47 +415,41 @@
             <div class="sensi-item"><span class="sensi-label">ADS SENSE</span><span class="sensi-value">${s.adsSensitivity}</span></div>
           </div>
           <div class="sensi-footnote">
-            <span class="badge">🔞 24/7 HARDCORE</span>
-            <span>⚡ HEADLOCK + ZAKA TUNED</span>
+            <span class="badge">🔞 24/7 ZAKA</span>
+            <span>⚡ HEADLOCK + GYRO TUNED</span>
           </div>
         `;
       }
 
-      // add message to chat (type = 'bot' or 'user')
       function addMessage(htmlContent, type) {
         const msgDiv = document.createElement('div');
         msgDiv.className = `msg ${type}`;
         msgDiv.innerHTML = htmlContent;
         chatDiv.appendChild(msgDiv);
-        // auto-scroll to bottom
         msgDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
 
-      // loading / intermediate message then final
       function sendMessage() {
         const userText = inputField.value.trim();
         if (userText === '') return;
 
-        // 1. show user message
+        // show user message
         addMessage(`📱 ${userText}`, 'user');
         inputField.value = '';
 
-        // 2. show "generating" bot message (optional loading)
-        const loadingId = 'loading-' + Date.now();
-        addMessage(`⏳ Generating 14 features for <strong>${userText}</strong> ...`, 'bot');
+        // loading message
+        addMessage(`⏳ compiling 14 features for <strong>${userText}</strong> ...`, 'bot');
 
-        // 3. after delay, replace loading with full sensi (remove loading + add final)
         setTimeout(() => {
-          // remove the last bot message (loading) – optional but cleaner
-          const allMessages = chatDiv.querySelectorAll('.msg');
-          if (allMessages.length > 0) {
-            const lastMsg = allMessages[allMessages.length - 1];
-            if (lastMsg.classList.contains('bot') && lastMsg.innerHTML.includes('⏳')) {
-              lastMsg.remove();  // remove loading
+          // remove loading message
+          const msgs = chatDiv.querySelectorAll('.msg');
+          if (msgs.length > 0) {
+            const last = msgs[msgs.length - 1];
+            if (last.classList.contains('bot') && last.innerHTML.includes('⏳')) {
+              last.remove();
             }
           }
 
-          // generate fresh 14 stats
           const sensi = generateFullSensi();
           const statsHTML = formatSensiMessage(sensi);
 
@@ -387,10 +460,9 @@
             </div>
             ${statsHTML}
           `, 'bot');
-        }, 750); // short delay after loading
+        }, 700);
       }
 
-      // also handle enter key
       inputField.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           e.preventDefault();
@@ -398,16 +470,13 @@
         }
       });
 
-      // Optional: pre-populate with a welcome extra message after page load (already got one)
-      // but we can push second message to demo? no, keep minimal.
-
-      // small extra: focus input
       inputField.focus();
 
-      // ensure iframe stays invisible to clicks (already pointer-events:none)
+      // bonus: video loop never shows any youtube logo because it's a video tag.
+      // we also prevent right click on video if we want (optional)
+      const video = document.getElementById('bg-video');
+      video.addEventListener('contextmenu', (e) => e.preventDefault());
     })();
   </script>
-
-  <!-- additional safety to mute any iframe sound if youtube starts unmuted (but we have mute=1) -->
 </body>
 </html>
