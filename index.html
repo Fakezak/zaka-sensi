@@ -3,124 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZAKA GOD MODE 🔥</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+<title>ZAKA SENSI BOT 🤖</title>
 
 <style>
 body{
     margin:0;
-    font-family:Inter;
     background:#050608;
+    font-family:sans-serif;
     color:white;
-    text-align:center;
+    display:flex;
+    flex-direction:column;
+    height:100vh;
 }
 
-.container{
-    max-width:900px;
-    margin:auto;
-    padding:20px;
-}
-
-h1{
-    font-weight:900;
-    background:linear-gradient(90deg,#ff0055,#6c5ce7);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-}
-
-/* VIDEO */
-.video{
-    width:100%;
-    height:220px;
-    border-radius:15px;
-    overflow:hidden;
-    margin-bottom:20px;
-}
-
-iframe{
+/* VIDEO BACKGROUND */
+video{
+    position:fixed;
+    top:0;
+    left:0;
     width:100%;
     height:100%;
+    object-fit:cover;
+    z-index:-1;
+    opacity:0.2;
 }
 
-/* BUTTON */
-button{
-    width:100%;
+/* CHAT */
+.chat{
+    flex:1;
     padding:15px;
-    border:none;
-    border-radius:12px;
-    font-size:18px;
-    font-weight:700;
-    cursor:pointer;
-    background:linear-gradient(135deg,#ff0055,#6c5ce7);
-    color:white;
-    margin-top:10px;
-    transition:0.2s;
+    overflow-y:auto;
 }
 
-button:hover{
-    transform:scale(1.05);
-}
-
-/* SENSI BOX */
-.box{
-    background:#111;
-    padding:15px;
-    border-radius:12px;
-    margin-top:15px;
-}
-
-.row{
-    display:flex;
-    justify-content:space-between;
-    padding:6px 0;
-}
-
-/* FEATURES */
-.features{
-    margin-top:15px;
+.msg{
+    max-width:75%;
+    padding:12px;
+    border-radius:15px;
+    margin:8px 0;
     font-size:14px;
-    color:#00ffcc;
 }
 
-/* EXPORT */
-.export{
-    background:#222;
+.bot{
+    background:#111;
+    align-self:flex-start;
+}
+
+.user{
+    background:linear-gradient(135deg,#ff0055,#6c5ce7);
+    align-self:flex-end;
+}
+
+/* INPUT */
+.inputBox{
+    display:flex;
     padding:10px;
+    background:#000;
+}
+
+input{
+    flex:1;
+    padding:12px;
+    border:none;
     border-radius:10px;
-    margin-top:10px;
-    font-size:13px;
+    outline:none;
+}
+
+button{
+    margin-left:10px;
+    padding:12px 15px;
+    border:none;
+    border-radius:10px;
+    background:#ff0055;
+    color:white;
+    cursor:pointer;
+}
+
+/* TITLE */
+.title{
+    text-align:center;
+    padding:10px;
+    font-weight:bold;
+    background:black;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<!-- CLEAN VIDEO (NO YOUTUBE BAR) -->
+<video autoplay muted loop>
+<source src="https://cdn.coverr.co/videos/coverr-gaming-session-5176/1080p.mp4" type="video/mp4">
+</video>
 
-<h1>ZAKA GOD MODE ⚡</h1>
+<div class="title">ZAKA SENSI BOT 🤖</div>
 
-<!-- VIDEO -->
-<div class="video">
-<iframe src="https://www.youtube.com/embed/a4EiputDwOs?autoplay=1&mute=1&controls=0&loop=1&playlist=a4EiputDwOs"></iframe>
+<div class="chat" id="chat">
+<div class="msg bot">💀 Welcome to Zaka Sensi Bot<br>Type your device (Android / iPhone)</div>
 </div>
 
-<button onclick="generate()">⚡ GENERATE GOD SENSI</button>
-<button onclick="applySensi()">💀 APPLY TO GAME</button>
-
-<div class="box" id="result">
-<div class="row"><span>General</span><span id="g">--</span></div>
-<div class="row"><span>Red Dot</span><span id="r">--</span></div>
-<div class="row"><span>2x Scope</span><span id="s2">--</span></div>
-<div class="row"><span>4x Scope</span><span id="s4">--</span></div>
-<div class="row"><span>Sniper</span><span id="sn">--</span></div>
-<div class="row"><span>Free Look</span><span id="fl">--</span></div>
-</div>
-
-<div class="features" id="features"></div>
-
-<div class="export" id="export"></div>
-
+<div class="inputBox">
+<input id="input" placeholder="Type your phone...">
+<button onclick="send()">Generate</button>
 </div>
 
 <script>
@@ -130,86 +113,56 @@ function rand(min,max){
 return Math.floor(Math.random()*(max-min+1))+min;
 }
 
-// 24 MODIFIERS
-const mods=[
-v=>v+5,v=>v-5,v=>v+10,v=>v-10,
-v=>v*1.05,v=>v*0.95,v=>v+3,v=>v-3,
-v=>v+7,v=>v-7,v=>v*1.1,v=>v*0.9,
-v=>v+12,v=>v-12,v=>v+8,v=>v-8,
-v=>v+15,v=>v-15,v=>v+6,v=>v-6,
-v=>v*1.03,v=>v*0.97,v=>v+2,v=>v-2
-];
-
-// FEATURES (14)
-const feats=[
-"No Recoil","Headlock","Drag Boost","Ultra Aim",
-"Gyro Sync","FPS Boost","Zero Shake","Aim Lock",
-"Red Dot Snap","Tracking Pro","Smooth Drag",
-"Fast Flick","Touch Boost","Scope Lock"
-];
-
-function pickFeatures(){
-let out=[];
-while(out.length<5){
-let f=feats[rand(0,feats.length-1)];
-if(!out.includes(f)) out.push(f);
-}
-return out;
+// GENERATE SENSI
+function generateSensi(){
+return {
+g:rand(170,200),
+r:rand(170,200),
+s2:rand(150,190),
+s4:rand(130,180),
+sn:rand(110,160),
+fl:rand(140,190)
+};
 }
 
-function applyMods(v){
-let result=v;
-for(let i=0;i<6;i++){
-let m=mods[rand(0,mods.length-1)];
-result=m(result);
-}
-return Math.max(0,Math.min(200,Math.round(result)));
-}
-
-// GENERATE
-function generate(){
-
-let g=applyMods(rand(170,200));
-let r=applyMods(rand(175,200));
-let s2=applyMods(rand(160,195));
-let s4=applyMods(rand(140,185));
-let sn=applyMods(rand(120,170));
-let fl=applyMods(rand(150,190));
-
-document.getElementById("g").innerText=g;
-document.getElementById("r").innerText=r;
-document.getElementById("s2").innerText=s2;
-document.getElementById("s4").innerText=s4;
-document.getElementById("sn").innerText=sn;
-document.getElementById("fl").innerText=fl;
-
-// FEATURES
-let f=pickFeatures();
-document.getElementById("features").innerText="🔥 "+f.join(" • ");
-
-// EXPORT
-document.getElementById("export").innerText=
-`EXPORT CODE:
-GEN:${g}|RD:${r}|2X:${s2}|4X:${s4}|SN:${sn}|FL:${fl}`;
-
-// BUTTON FX
-let btn=document.querySelector("button");
-btn.innerText="⚡ GENERATING...";
-setTimeout(()=>btn.innerText="🔥 DONE!",400);
-setTimeout(()=>btn.innerText="⚡ GENERATE GOD SENSI",1200);
+// CHAT ADD
+function addMsg(text,type){
+let div=document.createElement("div");
+div.className="msg "+type;
+div.innerHTML=text;
+document.getElementById("chat").appendChild(div);
+div.scrollIntoView();
 }
 
-// APPLY FAKE
-function applySensi(){
-let btns=document.querySelectorAll("button")[1];
-btns.innerText="💀 INJECTING...";
+// SEND
+function send(){
+let input=document.getElementById("input");
+let val=input.value.trim();
+if(!val) return;
+
+addMsg(val,"user");
+input.value="";
+
 setTimeout(()=>{
-btns.innerText="✅ APPLIED";
+
+let s=generateSensi();
+
+addMsg(`⚡ Generating GOD SENSI...`,"bot");
+
+setTimeout(()=>{
+addMsg(`
+🔥 <b>YOUR SENSI</b><br><br>
+General: ${s.g}<br>
+Red Dot: ${s.r}<br>
+2x Scope: ${s.s2}<br>
+4x Scope: ${s.s4}<br>
+Sniper: ${s.sn}<br>
+Free Look: ${s.fl}<br><br>
+💀 Headlock Enabled
+`,"bot");
 },800);
 
-setTimeout(()=>{
-btns.innerText="💀 APPLY TO GAME";
-},2000);
+},500);
 }
 
 </script>
