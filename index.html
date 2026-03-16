@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FF MAX SENSITIVITY 200 · SENSITIVITY VIEWER</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0b0c0f;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Main player card – looks like a premium video app */
+        .player-container {
+            max-width: 1200px;
+            width: 100%;
+            background: #141619;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 70, 70, 0.15);
+            overflow: hidden;
+            backdrop-filter: blur(2px);
+        }
+
+        /* video area + overlay */
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            background: #000;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            border-bottom: 3px solid #ff3b3b;
+        }
+
+        .sensitivity-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            pointer-events: none; /* let overlay handle clicks, video just plays */
+        }
+
+        /* overlay with sensi badge and dynamic crosshair */
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(255, 60, 60, 0.1) 0%, transparent 50%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 24px 28px;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sensitivity-badge {
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            padding: 10px 22px;
+            border-radius: 60px;
+            border: 1px solid #ff4d4d;
+            box-shadow: 0 0 25px #ff000080;
+            font-weight: 700;
+            font-size: 1.7rem;
+            letter-spacing: 2px;
+            color: white;
+        }
+
+        .sensitivity-badge span {
+            color: #ff5e5e;
+            text-shadow: 0 0 15px #ff3b3b;
+            font-size: 2.4rem;
+            margin-left: 8px;
+        }
+
+        .live-tag {
+            background: #ff3b3b;
+            color: white;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 20px #ff3b3b;
+        }
+
+        .live-tag::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .bottom-controls {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .progress-indicator {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            border-radius: 30px;
+            padding: 6px 18px;
+            color: #ddd;
+            font-size: 0.95rem;
+            border: 1px solid #3a3a3a;
+        }
+
+        .progress-indicator i {
+            color: #ff5e5e;
+            margin-right: 6px;
+        }
+
+        .crosshair-sim {
+            margin-left: auto;
+            background: rgba(20,20,20,0.7);
+            backdrop-filter: blur(5px);
+            padding: 8px 18px;
+            border-radius: 40px;
+            border: 1px solid #ff5e5e;
+            font-size: 0.95rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .crosshair-dot {
+            width: 12px;
+            height: 12px;
+            background: #ff3b3b;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #ff0000;
+        }
+
+        /* —————  SENSITIVITY CONTROLS PANEL ————— */
+        .control-panel {
+            padding: 32px 32px 38px;
+            background: #1a1c22;
+            background-image: radial-gradient(circle at 30% 40%, #2a2d36 0%, #14161c 100%);
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .panel-title h2 {
+            color: white;
+            font-weight: 500;
+            font-size: 1.6rem;
+            letter-spacing: -0.5px;
+        }
+
+        .panel-title .max-badge {
+            background: #ff3b3b20;
+            border: 1px solid #ff3b3b80;
+            color: #ff9f9f;
+            padding: 4px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .sensi-slider-container {
+            margin-bottom: 40px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            color: #b0b3c0;
+            margin-bottom: 14px;
+            font-size: 1.2rem;
+        }
+
+        .slider-header span:last-child {
+            color: #ffb7b7;
+            font-weight: 700;
+            font-size: 2rem;
+            line-height: 1;
+            text-shadow: 0 0 20px #ff5e5e;
+        }
+
+        /* custom range input — max 200 style */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, #3a3f4e, #ff3b3b, #ff9f4d);
+            border-radius: 20px;
+            outline: none;
+            margin: 15px 0;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 30px;
+            height: 30px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 30px #ff3b3b, 0 0 15px #ff0707;
+            border: 3px solid #ffb1b1;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+        /* sensi preset chips */
+        .sensi-presets {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin: 32px 0 24px;
+        }
+
+        .preset-chip {
+            background: #2b2f3a;
+            color: #b9c2d0;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            border: 1px solid #404553;
+            transition: all 0.2s;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #00000050;
+        }
+
+        .preset-chip:hover {
+            border-color: #ff5e5e;
+            color: white;
+            background: #3d3440;
+        }
+
+        .preset-chip.active {
+            background: #ff3b3b;
+            border-color: #ffc6c6;
+            color: white;
+            box-shadow: 0 0 25px #ff3b3b;
+        }
+
+        /* bottom meta — free fire style */
+        .video-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 36px;
+            color: #7d8395;
+        }
+
+        .video-meta-left {
+            display: flex;
+            gap: 30px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meta-item i {
+            color: #ff5e5e;
+            font-style: normal;
+            font-weight: 600;
+            background: #ff3b3b20;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .boost-note {
+            background: #20232b;
+            padding: 10px 30px;
+            border-radius: 60px;
+            border: 1px dashed #ff5e5e80;
+            color: #ffbaba;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .boost-note span { color: #ff9191; font-weight: 700; }
+
+        /* youtube embed hidden but autoplay */
+        .youtube-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.99; /* fully visible, but overlay on top */
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .youtube-background iframe {
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* so clicks go to overlay? we want no interaction */
+        }
+
+        /* overcomplicate? we will just use a video tag with loop & muted */
+        /* but we need the exact short. I'll embed as iframe but hide controls */
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            z-index: 2;
+            pointer-events: none; /* prevent pausing/clicks, just visual */
+        }
+
+        /* fix: to autoplay we need &autoplay=1&mute=1&loop=1 */
+        /* but iframe with pointer-events: none will still show video, perfect */
+        .video-source {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="player-container">
+        <!-- video section with overlay -->
+        <div class="video-wrapper">
+            <!-- embedded YouTube Shorts autoplay + mute + loop (via playlist) -->
+            <div class="video-source">
+                <iframe 
+                    src="https://www.youtube.com/embed/a4EiputDwOs?autoplay=1&mute=1&loop=1&playlist=a4EiputDwOs&controls=0&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&fs=0"
+                    allow="autoplay; encrypted-media"
+                    title="FF MAX SENSITIVITY"
+                    loading="lazy"
+                    sandbox="allow-scripts allow-same-origin allow-presentation">
+                </iframe>
+            </div>
+            <!-- stylish overlay with sensi feel -->
+            <div class="video-overlay">
+                <div class="top-bar">
+                    <div class="sensitivity-badge">
+                        MAX <span id="liveSensiDisplay">200</span>
+                    </div>
+                    <div class="live-tag">
+                        ⚡ LIVE SENSITIVITY
+                    </div>
+                </div>
+                <div class="bottom-controls">
+                    <div class="progress-indicator">
+                        <i>▶</i> PREVIEW • EXTREME SENSITIVITY
+                    </div>
+                    <div class="crosshair-sim">
+                        <span class="crosshair-dot"></span>
+                        <span>200% RANGE • 0ms DELAY</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- control panel -->
+        <div class="control-panel">
+            <div class="panel-title">
+                <h2>⚡ SENSITIVITY  ANALYZER</h2>
+                <div class="max-badge">MAX 200</div>
+            </div>
+
+            <!-- slider bonded with JS, max = 200 -->
+            <div class="sensi-slider-container">
+                <div class="slider-header">
+                    <span>GLOBAL SENSITIVITY</span>
+                    <span id="sensiValueDisplay">200</span>
+                </div>
+                <input type="range" id="sensiSlider" min="0" max="200" value="200" step="1">
+                <div style="display: flex; justify-content: space-between; color: #676e82; margin-top: 5px;">
+                    <span>0 (slow)</span>
+                    <span>100 (balanced)</span>
+                    <span>200 (MAX)</span>
+                </div>
+            </div>
+
+            <!-- preset chips for typical extremes, exactly like the video feel -->
+            <div class="sensi-presets">
+                <div class="preset-chip active" data-sensi="200">🔥 MAX 200</div>
+                <div class="preset-chip" data-sensi="180">⚡ PRO 180</div>
+                <div class="preset-chip" data-sensi="150">🎯 HIGH 150</div>
+                <div class="preset-chip" data-sensi="120">🔫 MED 120</div>
+                <div class="preset-chip" data-sensi="90">🧩 BALANCE 90</div>
+                <div class="preset-chip" data-sensi="60">🐢 LOW 60</div>
+            </div>
+
+            <!-- video meta + dynamic feel description -->
+            <div class="video-meta">
+                <div class="video-meta-left">
+                    <div class="meta-item">
+                        <i>↻</i> <span id="feelDescription">insane 360° flick</span>
+                    </div>
+                    <div class="meta-item">
+                        <i>⏱</i> <span>input lag: 0.2ms</span>
+                    </div>
+                </div>
+                <div class="boost-note">
+                    <span>◉</span> PREVIEW MATCHES VIDEO <span>⚡ 200 SENSITIVITY</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const slider = document.getElementById('sensiSlider');
+            const sensiSpan = document.getElementById('sensiValueDisplay');
+            const liveBadgeSpan = document.getElementById('liveSensiDisplay');
+            const presetChips = document.querySelectorAll('.preset-chip');
+            const feelEl = document.getElementById('feelDescription');
+
+            // descriptions mapping for different sensi ranges
+            const getFeel = (val) => {
+                if (val >= 190) return '⚡ insane 360° flick (max control)';
+                if (val >= 160) return '🌀 ultra-fast tracking';
+                if (val >= 130) return '💫 pro quick scope';
+                if (val >= 100) return '🎯 balanced high';
+                if (val >= 70) return '🔍 medium precision';
+                return '🐢 steady aim';
+            };
+
+            // update UI on slider change
+            function updateSensi(value) {
+                // ensure numeric
+                const num = parseInt(value, 10);
+                slider.value = num;
+                sensiSpan.innerText = num;
+                liveBadgeSpan.innerText = num;
+                feelEl.innerText = getFeel(num);
+
+                // highlight corresponding preset if matches exactly (optional)
+                presetChips.forEach(chip => {
+                    const chipVal = parseInt(chip.dataset.sensi, 10);
+                    if (chipVal === num) {
+                        chip.classList.add('active');
+                    } else {
+                        chip.classList.remove('active');
+                    }
+                });
+
+                // optional: change video overlay glow based on sensi
+                const overlay = document.querySelector('.video-overlay');
+                const intensity = num / 200;
+                const redGlow = 20 + Math.floor(80 * intensity);
+                overlay.style.background = `radial-gradient(circle at 20%% 30%%, rgba(255, 60, 60, ${0.1 + intensity*0.2}) 0%, transparent 60%)`;
+            }
+
+            // slider event
+            slider.addEventListener('input', (e) => {
+                updateSensi(e.target.value);
+            });
+
+            // preset click
+            presetChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    const sensiVal = parseInt(chip.dataset.sensi, 10);
+                    if (!isNaN(sensiVal)) {
+                        updateSensi(sensiVal);
+                    }
+                });
+            });
+
+            // ensure initial state = 200 (max)
+            updateSensi(200);
+
+            // extra: simulate autoplay overlay blink (just for fun)
+            setInterval(() => {
+                const liveDot = document.querySelector('.live-tag::before');
+                // can't directly, but we already have pulse animation, fine.
+            }, 1000);
+        })();
+    </script>
+</body>
+</html>
